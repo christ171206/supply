@@ -1,61 +1,188 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🧾 Application Web de Gestion de Stocks et de Commandes
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Projet tutoré – Université de Technologie et de Télécommunication de Loko (UTT Loko)  
+> Réalisé par une équipe d’étudiants de Licence 2 en Informatique  
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 👥 Équipe de Développement
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Nom | Rôle | Responsabilités principales |
+|------|------|-----------------------------|
+| **Koffi Mougoh Christ** | Chef de groupe & Développeur Full Stack | Coordination, développement backend et frontend |
+| **Kodjo Loïc** | Développeur Frontend | Intégration Tailwind CSS, Blade, ergonomie et interface |
+| **Koné Zakaria** | Responsable Base de Données & Backend | Conception MySQL, migrations, logique métier |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🎯 Objectif du Projet
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Créer une **application web complète** permettant à un vendeur de gérer ses produits, commandes et clients, et à ces derniers de :
+- consulter les produits,
+- passer commande,
+- suivre leurs achats,
+- communiquer avec le vendeur via une messagerie intégrée.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🧰 Technologies utilisées
 
-## Laravel Sponsors
+| Domaine | Outil / Technologie |
+|----------|---------------------|
+| Langage backend | PHP 8+ |
+| Framework backend | Laravel 11 |
+| Base de données | MySQL |
+| Frontend | Blade + Tailwind CSS |
+| Environnement local | XAMPP / Laragon |
+| Gestion de versions | Git & GitHub |
+| Éditeur recommandé | VS Code |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## ⚙️ Installation du Projet (Guide pour les membres du groupe)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 1️⃣ Prérequis
 
-## Contributing
+Avant de commencer, installez :
+- **Git** → [https://git-scm.com/downloads](https://git-scm.com/downloads)  
+- **Composer** → [https://getcomposer.org/download/](https://getcomposer.org/download/)  
+- **Node.js (LTS)** → [https://nodejs.org/en/download](https://nodejs.org/en/download)  
+- **XAMPP ou Laragon** → (pour Apache + MySQL)  
+- **VS Code** → [https://code.visualstudio.com/](https://code.visualstudio.com/)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+### 2️⃣ Cloner le dépôt GitHub
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
 
-## Security Vulnerabilities
+git clone https://github.com/christ171206/supply.git
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 3️⃣ Installer les dépendances
+
+**a. Dépendances PHP (Laravel)**  
+```bash
+composer install
+```
+
+**b. Dépendances Node.js (Tailwind & Vite)**  
+```bash
+npm install
+```
+
+---
+
+### 4️⃣ Configurer l’environnement
+
+Créer le fichier `.env` à partir de l’exemple :
+```bash
+copy .env.example .env
+```
+
+Configurer la base de données dans `.env` :
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=supply
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Créer la base dans **phpMyAdmin** :
+```sql
+CREATE DATABASE supply;
+```
+
+---
+
+### 5️⃣ Générer la clé d’application
+
+```bash
+php artisan key:generate
+```
+
+---
+
+### 6️⃣ Exécuter les migrations
+
+```bash
+php artisan migrate
+```
+
+---
+
+### 7️⃣ Lancer le projet
+
+Dans **deux terminaux séparés** :
+
+**Terminal 1 :** (serveur Laravel)
+```bash
+php artisan serve
+```
+
+**Terminal 2 :** (compilation Tailwind)
+```bash
+npm run dev
+```
+
+Ouvrez ensuite [http://127.0.0.1:8000](http://127.0.0.1:8000) dans le navigateur 🎉
+
+---
+
+
+## 📁 Structure du projet
+
+```
+supply/
+├─ app/
+│  ├─ Http/
+│  └─ Models/
+├─ database/
+│  ├─ migrations/
+│  └─ seeders/
+├─ public/
+├─ resources/
+│  ├─ css/
+│  │  └─ app.css
+│  ├─ js/
+│  ├─ views/
+│  │  ├─ layouts/
+│  │  ├─ vendeur/
+│  │  └─ client/
+├─ routes/
+│  └─ web.php
+├─ tailwind.config.js
+├─ postcss.config.js
+└─ .env
+```
+
+---
+
+## 🧠 Astuce
+
+Si Tailwind ne compile pas correctement, exécute :
+```bash
+npm run build
+```
+ou supprime le dossier `node_modules` puis refais :
+```bash
+npm install
+```
+
+---
+
+## 💬 Remarques finales
+
+> Ce guide est destiné aux membres du groupe afin d’assurer une installation identique sur toutes les machines.  
+> Toute modification majeure doit être communiquée sur le groupe et validée avant d’être fusionnée sur `main`.
+
+---
+
+🧑‍💻 **Auteur principal :** [Koffi Mougoh Christ](https://github.com/<ton-utilisateur>)  
+📅 **Dernière mise à jour :** Octobre 2025  
+📦 **Projet : Supply — Application de gestion de stocks et commandes**
