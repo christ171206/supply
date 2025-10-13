@@ -4,17 +4,16 @@
 > Réalisé par une équipe d’étudiants de Licence 2 en Informatique  
 
 ---
-
 ## 👥 Équipe de Développement
 
 | Nom | Rôle | Responsabilités principales |
 |------|------|-----------------------------|
 | **Koffi Mougoh Christ** | Chef de groupe & Développeur Full Stack | Coordination, développement backend et frontend |
 | **Kodjo Loïc** | Développeur Frontend | Intégration Tailwind CSS, Blade, ergonomie et interface |
-| **Koné Zakaria** | Responsable Base de Données & Backend | Conception MySQL, migrations, logique métier |
+| **Konkobo Christ** | Responsable Base de Données & Backend | Conception MySQL, migrations, logique métier |
 
 ---
-
+s
 ## 🎯 Objectif du Projet
 
 Créer une **application web complète** permettant à un vendeur de gérer ses produits, commandes et clients, et à ces derniers de :
@@ -79,7 +78,7 @@ npm install
 ### 4️⃣ Configurer l’environnement
 
 Créer le fichier `.env` à partir de l’exemple :
-```bash
+```
 copy .env.example .env
 ```
 
