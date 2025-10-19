@@ -3,62 +3,37 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class VendeurController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Affiche la page de vérification d'identité
      */
-    public function index()
+    public function showVerificationPage(): View
     {
-        //
+        return view('vendeur.verification');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Gère l'upload de la CNI
      */
-    public function create()
+    public function uploadCni(Request $request): RedirectResponse
     {
-        //
-    }
+        $request->validate([
+            'cni' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $path = $request->file('cni')->store('cni', 'public');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        // Mettre à jour le statut du vendeur si nécessaire
+        $user = auth()->user();
+        if ($user->role === 'vendeur') {
+            // Logique de mise à jour du statut
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Retourner vers la même page avec un message de confirmation
+        return back()->with('success', 'Votre CNI a été envoyée et sera vérifiée par l\'administrateur.');
     }
 }
