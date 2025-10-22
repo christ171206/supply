@@ -27,10 +27,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
     public $timestamps = false; // ✅ DÉSACTIVE created_at et updated_at
 
     public function getAuthPassword()
     {
         return $this->motDePasse;
+    }
+
+    public function vendeur()
+    {
+        return $this->hasOne(Vendeur::class, 'id');
     }
 }

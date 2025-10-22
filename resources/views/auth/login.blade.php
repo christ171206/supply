@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Supply</title>
-    @vite('resources/css/app.css')
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen flex items-center justify-center font-sans">
@@ -46,9 +46,9 @@
             </div>
 
             <div>
-                <label for="motDePasse" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
                 <div class="relative mt-1">
-                    <input type="password" id="motDePasse" name="motDePasse" required
+                    <input type="password" id="password" name="password" required
                         class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent focus:outline-none">
                     <button type="button" id="togglePassword" aria-label="Afficher ou masquer le mot de passe"
                         class="absolute inset-y-0 right-3 flex items-center text-gray-500">
@@ -107,7 +107,7 @@
     <script>
         // Afficher / masquer le mot de passe
         (function(){
-            const pw = document.getElementById('motDePasse');
+            const pw = document.getElementById('password');
             const btn = document.getElementById('togglePassword');
             const eyeOpen = document.getElementById('eyeOpen');
             const eyeClosed = document.getElementById('eyeClosed');

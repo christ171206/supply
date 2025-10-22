@@ -3,34 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mot de passe réinitialisé - Supply</title>
-    @vite('resources/css/app.css')
+    <title>Mot de passe réinitialisé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen flex items-center justify-center font-sans">
-    <div class="w-full max-w-sm mx-4">
-        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <!-- Logo et succès -->
-            <div class="text-center mb-8">
-                <img src="{{ asset('images/ChatGPT Image 31 juil. 2025, 00_39_29.png') }}" alt="Logo Supply" class="w-16 h-16 mx-auto mb-4">
-                
-                <div class="flex flex-col items-center justify-center mb-6">
-                    <div class="rounded-full bg-green-100 p-3 mb-4">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-800">Mot de passe réinitialisé !</h2>
-                    <p class="text-sm text-gray-600 mt-2">
-                        Votre mot de passe a été réinitialisé avec succès.
-                        Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
-                    </p>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col justify-center items-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96 max-w-full mx-4">
+            <!-- Icône de succès -->
+            <div class="text-center mb-4">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
                 </div>
             </div>
 
+            <!-- Message de succès -->
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Succès !</h2>
+                <p class="text-gray-600">
+                    Votre mot de passe a été réinitialisé avec succès.
+                </p>
+            </div>
+
             <!-- Bouton de connexion -->
-            <div>
-                <a href="{{ route('login') }}" 
-                   class="block w-full py-3 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white font-semibold rounded-lg shadow-lg text-center transition duration-200">
+            <div class="mt-6">
+                <a href="{{ route('login') }}" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Se connecter
                 </a>
             </div>

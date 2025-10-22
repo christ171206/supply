@@ -18,12 +18,26 @@ class Utilisateur extends Authenticatable
         'motDePasse',
         'adresse',
         'telephone',
-        'role'
+        'role',
+        'settings'
     ];
 
     protected $hidden = ['motDePasse'];
 
+    protected $casts = [
+        'settings' => 'array'
+    ];
+
     public $timestamps = false;
+
+    public function getSetting($key, $default = null)
+    {
+        if (!$this->settings) {
+            return $default;
+        }
+
+        return data_get($this->settings, $key, $default);
+    }
 
     // 🔗 Relations
     public function client() {
@@ -44,5 +58,20 @@ class Utilisateur extends Authenticatable
 
     public function notifications() {
         return $this->hasMany(Notification::class, 'idUtilisateur');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isVendeur(): bool
+    {
+        return $this->role === 'vendeur';
+    }
+
+    public function isClient(): bool
+    {
+        return $this->role === 'client';
     }
 }

@@ -59,17 +59,45 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'motDePasse' => 'required',
+            'password' => 'required',
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        try {
+            $user = User::where('email', $credentials['email'])->first();
 
-        if ($user && Hash::check($credentials['motDePasse'], $user->motDePasse)) {
-            Auth::login($user);
-            return redirect('/dashboard');
+            if ($user && Hash::check($credentials['password'], $user->motDePasse)) {
+                Auth::login($user);
+                
+                // Récupérer l'URL prévue si elle existe
+                $intendedUrl = session()->get('url.intended');
+                
+                // Si aucune URL prévue, rediriger selon le rôle
+                if (!$intendedUrl) {
+                    switch ($user->role) {
+                        case 'admin':
+                            return redirect()->route('admin.dashboard');
+                        case 'vendeur':
+                            return redirect()->route('vendeur.dashboard');
+                        case 'client':
+                            return redirect()->route('client.dashboard');
+                        default:
+                            return redirect('/');
+                    }
+                }
+                
+                // Rediriger vers l'URL prévue
+                return redirect()->intended(route('client.dashboard'));
+            }
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Email ou mot de passe incorrect.']);
+                
+        } catch (\Exception $e) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Une erreur est survenue lors de la connexion.']);
         }
-
-        return back()->withErrors(['email' => 'Email ou mot de passe incorrect.']);
     }
 
     // 🔹 Déconnexion
@@ -144,32 +172,52 @@ class AuthController extends Controller
         ]);
     }
 
-        // Réinitialise le mot de passe
+    // Réinitialise le mot de passe
     public function resetPassword(Request $request)
     {
-        // Validation des champs
-        $request->validate([
-            'code' => 'required|digits:6',
-            'email' => 'required|email|exists:utilisateurs,email',
-            'motDePasse' => 'required|min:6|confirmed',
-        ]);
-
-        // Vérifier le code
-        $resetCode = DB::table('reset_codes')
-            ->where('email', $request->email)
-            ->where('code', $request->code)
-            ->where('expires_at', '>', now())
-            ->first();
-
-        // Si le code est invalide ou expiré
-        if (!$resetCode) {
-            return back()
-                ->withInput($request->only('email'))
-                ->with('reset_code', true) // Pour garder le formulaire de réinitialisation ouvert
-                ->withErrors(['code' => 'Code invalide. Vérifiez le code et réessayez.']);
-        }
-
         try {
+            // Validation des champs
+            $validated = $request->validate([
+                'code' => 'required|digits:6',
+                'email' => 'required|email|exists:utilisateurs,email',
+                'motDePasse' => 'required|min:6|confirmed',
+            ]);
+
+            // Vérifier le code
+            $resetCode = DB::table('reset_codes')
+                ->where('email', $request->email)
+                ->where('code', $request->code)
+                ->where('expires_at', '>', now())
+                ->first();
+
+            // Si le code est invalide ou expiré
+            if (!$resetCode) {
+                // On récupère le code valide pour cet email
+                $validCode = DB::table('reset_codes')
+                    ->where('email', $request->email)
+                    ->where('expires_at', '>', now())
+                    ->first();
+
+                if ($validCode) {
+                    return back()
+                        ->withInput()  // Garder tous les inputs
+                        ->with([
+                            'email' => $request->email,
+                            'reset_code' => $validCode->code,
+                            'code' => $request->code  // Garder le code saisi
+                        ])
+                        ->withErrors(['code' => 'Code incorrect. Veuillez réessayer.']);
+                }
+
+                return back()
+                    ->withInput()  // Garder tous les inputs
+                    ->with([
+                        'email' => $request->email,
+                        'code' => $request->code  // Garder le code saisi
+                    ])
+                    ->withErrors(['code' => 'Code expiré. Veuillez demander un nouveau code.']);
+            }
+
             DB::beginTransaction();
 
             // Trouver et mettre à jour l'utilisateur
@@ -181,18 +229,21 @@ class AuthController extends Controller
 
             DB::commit();
 
-            // Connecter l'utilisateur
-            Auth::login($user);
-
-            // Rediriger vers la page de succès
+            // Rediriger vers la vue de succès directement
             return view('auth.reset-success');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()
-                ->route('password.request')
-                ->withErrors(['email' => 'Une erreur est survenue lors de la réinitialisation. Veuillez réessayer.'])
-                ->withInput($request->only('email'));
+            if (isset($DB) && $DB->transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            return back()
+                ->withInput()
+                ->with([
+                    'email' => $request->email,
+                    'code' => $request->code,
+                    'reset_code' => session('reset_code')
+                ])
+                ->withErrors(['error' => 'Une erreur est survenue lors de la réinitialisation. Veuillez réessayer.']);
         }
 }
 }

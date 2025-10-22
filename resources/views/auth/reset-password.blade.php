@@ -10,15 +10,25 @@
     <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h2 class="text-2xl font-semibold mb-4 text-center">Réinitialisation du mot de passe</h2>
         
+        @if (session('reset_code'))
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+                <p class="text-sm mb-1">Votre code de réinitialisation :</p>
+                <p class="text-center text-xl font-bold">{{ session('reset_code') }}</p>
+            </div>
+        @endif
+
         @if (session('status'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('status') }}
             </div>
-            @if (session('reset_code'))
-                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4 text-center text-xl font-bold">
-                    {{ session('reset_code') }}
-                </div>
-            @endif
+        @endif
+
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
         @endif
 
         <form method="POST" action="{{ route('password.update') }}" class="space-y-4">
@@ -29,12 +39,9 @@
                 <input type="email" 
                        id="email" 
                        name="email" 
-                       value="{{ old('email', request('email')) }}" 
+                       value="{{ old('email', session('email')) }}" 
                        required
                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
             </div>
 
             <div>
@@ -42,14 +49,13 @@
                 <input type="text" 
                        id="code" 
                        name="code" 
+                       value="{{ old('code', session('code')) }}"
                        required
                        pattern="[0-9]{6}"
                        maxlength="6"
                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                        placeholder="Entrez le code à 6 chiffres">
-                @error('code')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
+                <p class="text-sm text-gray-500 mt-1">Entrez le code à 6 chiffres affiché ci-dessus</p>
             </div>
 
             <div>
@@ -60,9 +66,6 @@
                        required
                        minlength="6"
                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                @error('motDePasse')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
             </div>
 
             <div>
@@ -83,12 +86,6 @@
                 <a href="{{ route('login') }}" class="text-blue-700 hover:underline">
                     Retour à la connexion
                 </a>
-            </p>
-        </form>
-    </div>
-</body>
-</html>
-                <a href="/login">Back to Sign In</a>
             </p>
         </form>
     </div>
