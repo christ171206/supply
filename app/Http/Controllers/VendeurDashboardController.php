@@ -23,6 +23,17 @@ class VendeurDashboardController extends Controller
             'produits_rupture' => $this->getProduitsEnRupture()
         ];
 
+        // Récupérer les messages récents
+        $messages_recents = \App\Models\Message::whereHas('conversation', function($query) use ($vendeur) {
+            $query->whereHas('vendeur', function($q) use ($vendeur) {
+                $q->where('id', $vendeur->id);
+            });
+        })
+        ->with(['expediteur', 'conversation'])
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
         // Récupérer les dernières commandes
         $dernieres_commandes = Commande::where('idVendeur', $vendeur->id)
             ->with(['client', 'lignes.produit'])
@@ -42,7 +53,8 @@ class VendeurDashboardController extends Controller
             'stats',
             'dernieres_commandes',
             'produits_rupture',
-            'meilleures_ventes'
+            'meilleures_ventes',
+            'messages_recents'
         ));
     }
 

@@ -86,6 +86,40 @@
     </div>
 </div>
 
+<!-- Section Messages -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Messages récents</h3>
+        <a href="{{ route('vendeur.messagerie') }}" class="text-blue-500 hover:text-blue-600 text-sm">Voir tout</a>
+    </div>
+    <div class="space-y-4">
+        @forelse($messages_recents ?? [] as $message)
+            <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
+                <div class="flex-shrink-0">
+                    <img class="h-10 w-10 rounded-full" 
+                         src="https://ui-avatars.com/api/?name={{ urlencode($message->expediteur->nom) }}" 
+                         alt="{{ $message->expediteur->nom }}">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                        {{ $message->expediteur->nom }}
+                    </p>
+                    <p class="text-sm text-gray-500 truncate">
+                        {{ Str::limit($message->contenu, 50) }}
+                    </p>
+                </div>
+                <div class="text-xs text-gray-400">
+                    {{ $message->created_at ? $message->created_at->diffForHumans() : '' }}
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-4 text-gray-500">
+                Aucun message récent
+            </div>
+        @endforelse
+    </div>
+</div>
+
 <!-- Graphiques et statistiques détaillées -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
     <!-- Graphique des ventes -->

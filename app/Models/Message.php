@@ -9,20 +9,33 @@ class Message extends Model
 {
     use HasFactory;
 
-    protected $table = 'messages';
-    protected $primaryKey = 'idMessage';
-    public $timestamps = false;
-
     protected $fillable = [
-        'contenu', 'dateEnvoi', 'lu', 'expediteur_id', 'destinataire_id'
+        'conversation_id',
+        'expediteur_id',
+        'contenu',
+        'produit_id',
+        'piece_jointe',
+        'lu',
+        'lu_at'
     ];
 
-    // 🔗 Relations
-    public function expediteur() {
-        return $this->belongsTo(Utilisateur::class, 'expediteur_id');
+    protected $casts = [
+        'lu' => 'boolean',
+        'lu_at' => 'datetime'
+    ];
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class);
     }
 
-    public function destinataire() {
-        return $this->belongsTo(Utilisateur::class, 'destinataire_id');
+    public function expediteur()
+    {
+        return $this->belongsTo(User::class, 'expediteur_id');
+    }
+
+    public function produit()
+    {
+        return $this->belongsTo(Produit::class);
     }
 }

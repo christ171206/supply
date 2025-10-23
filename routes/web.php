@@ -67,6 +67,14 @@ Route::group(['middleware' => ['web', 'auth', \App\Http\Middleware\IsClient::cla
         Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
         Route::get('/commandes', [ClientDashboardController::class, 'commandes'])->name('client.commandes');
         Route::get('/panier', [ClientDashboardController::class, 'panier'])->name('client.panier');
+        
+        // Messagerie
+        Route::prefix('messagerie')->group(function () {
+            Route::get('/', [MessagerieController::class, 'index'])->name('client.messages');
+            Route::post('/messages', [MessagerieController::class, 'store'])->name('client.messages.store');
+            Route::post('/messages/lu', [MessagerieController::class, 'marquerCommeLu'])->name('client.messages.lu');
+            Route::post('/conversations', [MessagerieController::class, 'nouvelleConversation'])->name('client.conversations.nouvelle');
+        });
     });
 });
 
@@ -113,14 +121,37 @@ Route::group(['middleware' => ['web', 'auth', \App\Http\Middleware\IsVendeur::cl
         Route::get('/paiements/export', [VendeurDashboardController::class, 'exportPaiements'])->name('vendeur.paiements.export');
         
         // Profil vendeur
-        Route::get('/profile', [VendeurDashboardController::class, 'profile'])->name('vendeur.profile');
-        Route::put('/profile', [VendeurDashboardController::class, 'updateProfile'])->name('vendeur.profile.update');
-        Route::post('/profile/avatar', [VendeurDashboardController::class, 'updateAvatar'])->name('vendeur.profile.avatar');
-        Route::put('/profile/password', [VendeurDashboardController::class, 'updatePassword'])->name('vendeur.profile.password');
+        Route::prefix('profile')->group(function () {
+            Route::get('/', [App\Http\Controllers\Vendeur\ProfileController::class, 'profile'])->name('vendeur.profile');
+            Route::put('/', [App\Http\Controllers\Vendeur\ProfileController::class, 'updateProfile'])->name('vendeur.profile.update');
+            Route::post('/quick-update', [App\Http\Controllers\Vendeur\ProfileController::class, 'quickUpdate'])->name('vendeur.profile.quick-update');
+            Route::post('/avatar', [App\Http\Controllers\Vendeur\ProfileController::class, 'updateAvatar'])->name('vendeur.profile.avatar');
+            Route::put('/password', [App\Http\Controllers\Vendeur\ProfileController::class, 'updatePassword'])->name('vendeur.profile.password');
+            Route::post('/cni', [App\Http\Controllers\Vendeur\ProfileController::class, 'updateCNI'])->name('vendeur.profile.cni');
+            Route::post('/deactivate', [App\Http\Controllers\Vendeur\ProfileController::class, 'deactivateAccount'])->name('vendeur.profile.deactivate');
+            Route::delete('/', [App\Http\Controllers\Vendeur\ProfileController::class, 'deleteAccount'])->name('vendeur.profile.delete');
+            Route::post('/logout-all', [App\Http\Controllers\Vendeur\ProfileController::class, 'logoutAllDevices'])->name('vendeur.profile.logout-all');
+        });
         
         // Paramètres
-        Route::get('/parametres', [VendeurDashboardController::class, 'parametres'])->name('vendeur.parametres');
-        Route::put('/parametres', [VendeurDashboardController::class, 'updateParametres'])->name('vendeur.parametres.update');
+        Route::prefix('parametres')->group(function () {
+            Route::get('/', [App\Http\Controllers\Vendeur\ParametresController::class, 'index'])->name('vendeur.parametres');
+            Route::put('/general', [App\Http\Controllers\Vendeur\ParametresController::class, 'updateGeneral'])->name('vendeur.parametres.general');
+            Route::put('/boutique', [App\Http\Controllers\Vendeur\ParametresController::class, 'updateBoutique'])->name('vendeur.parametres.boutique');
+            Route::put('/paiement', [App\Http\Controllers\Vendeur\ParametresController::class, 'updatePaiement'])->name('vendeur.parametres.paiement');
+            Route::post('/boutique/logo', [App\Http\Controllers\Vendeur\ParametresController::class, 'updateLogo'])->name('vendeur.parametres.logo');
+        });
+
+        // Messagerie
+        Route::prefix('messagerie')->group(function () {
+            Route::get('/', [App\Http\Controllers\Vendeur\MessagerieController::class, 'index'])->name('vendeur.messagerie');
+            Route::post('/envoyer', [App\Http\Controllers\Vendeur\MessagerieController::class, 'sendMessage'])->name('vendeur.messagerie.send');
+            Route::post('/upload', [App\Http\Controllers\Vendeur\MessagerieController::class, 'uploadFile'])->name('vendeur.messagerie.upload');
+            Route::post('/lu', [App\Http\Controllers\Vendeur\MessagerieController::class, 'markAsRead'])->name('vendeur.messagerie.mark-read');
+            Route::post('/resoudre', [App\Http\Controllers\Vendeur\MessagerieController::class, 'resolveConversation'])->name('vendeur.messagerie.resolve');
+            Route::post('/bloquer', [App\Http\Controllers\Vendeur\MessagerieController::class, 'blockUser'])->name('vendeur.messagerie.block');
+            Route::get('/non-lu', [App\Http\Controllers\Vendeur\MessagerieController::class, 'getUnreadCount'])->name('vendeur.messagerie.unread-count');
+        });
         
         // Rapports et statistiques
         Route::get('/rapports', [VendeurDashboardController::class, 'rapports'])->name('vendeur.rapports');
