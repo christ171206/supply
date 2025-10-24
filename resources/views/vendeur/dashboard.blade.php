@@ -4,11 +4,11 @@
 
 @section('content')
 <!-- Bannière de bienvenue -->
-<div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg mb-6 p-6">
+<div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg shadow-lg mb-6 p-6">
     <div class="flex items-center justify-between">
         <div>
             <h2 class="text-white text-2xl font-bold mb-2">Bienvenue, {{ Auth::user()->nom }} ! 👋</h2>
-            <p class="text-blue-100">Voici un aperçu de votre activité aujourd'hui</p>
+            <p class="text-slate-300">Voici un aperçu de votre activité aujourd'hui</p>
         </div>
         <div class="hidden md:block">
             <img src="{{ asset('images/dashboard-welcome.svg') }}" alt="Welcome" class="h-24">
@@ -18,70 +18,70 @@
 
 <!-- Filtres de période -->
 <div class="flex items-center space-x-4 mb-6">
-    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    <button class="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 transition-colors">
         Aujourd'hui
     </button>
-    <button class="bg-white text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    <button class="bg-white text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 transition-colors">
         Cette semaine
     </button>
-    <button class="bg-white text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    <button class="bg-white text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 transition-colors">
         Ce mois
     </button>
-    <button class="bg-white text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    <button class="bg-white text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-50 transition-colors">
         Cette année
     </button>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
     <!-- Statistiques des ventes -->
-    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow p-6">
+    <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg shadow-sm p-6 hover:from-slate-100 hover:to-slate-200 transition-colors duration-200">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">Chiffre d'affaires</h3>
-            <span class="bg-green-200 rounded-full p-2">
-                <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h3 class="text-lg font-semibold text-slate-700">Chiffre d'affaires</h3>
+            <span class="bg-sky-100 rounded-full p-2">
+                <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </span>
         </div>
-        <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['chiffre_affaires'], 0, ',', ' ') }} FCFA</p>
+        <p class="text-3xl font-bold text-slate-900">{{ number_format($stats['chiffre_affaires'], 0, ',', ' ') }} FCFA</p>
         <div class="flex items-center mt-2">
-            <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-sky-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
             </svg>
-            <p class="text-sm text-green-600">Ce mois-ci</p>
+            <p class="text-sm text-sky-600">Ce mois-ci</p>
         </div>
     </div>
 
     <!-- Commandes -->
-    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow p-6">
+    <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg shadow-sm p-6 hover:from-slate-100 hover:to-slate-200 transition-colors duration-200">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">Commandes</h3>
-            <span class="bg-blue-200 rounded-full p-2">
-                <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h3 class="text-lg font-semibold text-slate-700">Commandes</h3>
+            <span class="bg-sky-100 rounded-full p-2">
+                <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                 </svg>
             </span>
         </div>
-        <p class="text-3xl font-bold text-gray-900">{{ $stats['total_commandes'] }}</p>
+        <p class="text-3xl font-bold text-slate-900">{{ $stats['total_commandes'] }}</p>
         <div class="flex items-center mt-2">
-            <span class="w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
-            <p class="text-sm text-gray-600">Ce mois-ci</p>
+            <span class="w-2 h-2 rounded-full bg-sky-400 mr-2"></span>
+            <p class="text-sm text-slate-600">Ce mois-ci</p>
         </div>
     </div>
 
     <!-- Produits -->
-    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow p-6">
+    <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg shadow-sm p-6 hover:from-slate-100 hover:to-slate-200 transition-colors duration-200">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">Produits</h3>
-            <span class="bg-purple-200 rounded-full p-2">
-                <svg class="w-6 h-6 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h3 class="text-lg font-semibold text-slate-700">Produits</h3>
+            <span class="bg-sky-100 rounded-full p-2">
+                <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
             </span>
         </div>
-        <p class="text-3xl font-bold text-gray-900">{{ $stats['total_produits'] }}</p>
+        <p class="text-3xl font-bold text-slate-900">{{ $stats['total_produits'] }}</p>
         <div class="flex items-center mt-2">
-            <span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
-            <p class="text-sm text-gray-600">{{ $stats['produits_rupture'] }} en rupture de stock</p>
+            <span class="w-2 h-2 rounded-full bg-sky-400 mr-2"></span>
+            <p class="text-sm text-slate-600">{{ $stats['produits_rupture'] }} en rupture de stock</p>
         </div>
     </div>
 </div>
@@ -90,25 +90,25 @@
 <div class="bg-white rounded-lg shadow p-6 mb-6">
     <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-800">Messages récents</h3>
-        <a href="{{ route('vendeur.messagerie') }}" class="text-blue-500 hover:text-blue-600 text-sm">Voir tout</a>
+        <a href="{{ route('vendeur.messagerie') }}" class="text-sky-600 hover:text-sky-700 text-sm transition-colors">Voir tout</a>
     </div>
     <div class="space-y-4">
         @forelse($messages_recents ?? [] as $message)
-            <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
+            <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-lg transition-colors duration-200">
                 <div class="flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" 
+                    <img class="h-10 w-10 rounded-full shadow-sm" 
                          src="https://ui-avatars.com/api/?name={{ urlencode($message->expediteur->nom) }}" 
                          alt="{{ $message->expediteur->nom }}">
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">
+                    <p class="text-sm font-medium text-slate-900 truncate">
                         {{ $message->expediteur->nom }}
                     </p>
-                    <p class="text-sm text-gray-500 truncate">
+                    <p class="text-sm text-slate-600 truncate">
                         {{ Str::limit($message->contenu, 50) }}
                     </p>
                 </div>
-                <div class="text-xs text-gray-400">
+                <div class="text-xs text-slate-400">
                     {{ $message->created_at ? $message->created_at->diffForHumans() : '' }}
                 </div>
             </div>
@@ -173,21 +173,21 @@
 </div>
 
 <!-- Dernières commandes -->
-<div class="bg-white rounded-lg shadow">
-    <div class="flex items-center justify-between p-6 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-800">Dernières commandes</h2>
-        <a href="{{ route('vendeur.commandes') }}" class="text-blue-500 hover:text-blue-600">Voir tout</a>
+<div class="bg-white rounded-lg shadow-sm">
+    <div class="flex items-center justify-between p-6 border-b border-slate-200">
+        <h2 class="text-lg font-semibold text-slate-800">Dernières commandes</h2>
+        <a href="{{ route('vendeur.commandes') }}" class="text-sky-600 hover:text-sky-700 transition-colors">Voir tout</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full">
-            <thead class="bg-gray-50">
+            <thead class="bg-slate-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produits</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Client</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Produits</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Total</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Statut</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -278,10 +278,22 @@
             scales: {
                 y: {
                     beginAtZero: true,
+                    grid: {
+                        color: '#f1f5f9'
+                    },
                     ticks: {
                         callback: function(value) {
                             return value.toLocaleString() + ' FCFA';
-                        }
+                        },
+                        color: '#64748b'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: '#f1f5f9'
+                    },
+                    ticks: {
+                        color: '#64748b'
                     }
                 }
             }

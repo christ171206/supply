@@ -7,15 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 font-sans flex items-center justify-center py-12">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 font-sans flex items-center justify-center py-12">
 
-    <div class="w-full max-w-3xl mx-4 bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+    <div class="w-full max-w-3xl mx-4 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row border border-slate-200">
 
         <!-- Colonne gauche (branding) -->
-        <div class="hidden md:flex flex-col justify-center items-center bg-gray-100 text-gray-700 p-10 w-1/2">
-            <img src="{{ asset('images/logo.svg') }}" alt="Logo Supply" class="w-16 mb-4">
-            <h2 class="text-2xl font-bold text-gray-800">Bienvenue sur Supply</h2>
-            <p class="text-sm text-gray-600 mt-3 text-center leading-relaxed">
+        <div class="hidden md:flex flex-col justify-center items-center bg-slate-800 text-white p-10 w-1/2">
+            <div class="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center mb-4">
+                <img src="{{ asset('images/logo.svg') }}" alt="Logo Supply" class="w-12 h-12">
+            </div>
+            <h2 class="text-2xl font-bold text-white">Bienvenue sur Supply</h2>
+            <p class="text-sm text-slate-300 mt-3 text-center leading-relaxed">
                 Gérez vos produits, commandes et clients facilement depuis votre espace personnel.
             </p>
             <img src="{{ asset('images/shopping.svg') }}" alt="illustration" class="w-40 mt-8 opacity-80">
@@ -135,8 +137,8 @@
 
                 <!-- Bouton principal -->
                 <div class="mt-8 mb-4">
-                    <button form="registerForm" type="submit"
-                            class="relative w-full bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white text-lg font-bold rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all duration-200">
+                            <button form="registerForm" type="submit"
+                            class="relative w-full bg-slate-800 hover:bg-slate-900 text-white text-lg font-bold rounded-xl shadow-lg transition-all duration-200">
                         <div class="px-8 py-4 flex items-center justify-center space-x-3">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

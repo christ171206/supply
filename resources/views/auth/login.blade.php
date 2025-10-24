@@ -7,15 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen flex items-center justify-center font-sans">
+<body class="bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen flex items-center justify-center font-sans">
 
     <!-- Carte centrée -->
-    <div class="w-full max-w-sm bg-white rounded-2xl shadow-xl px-6 py-8 border border-gray-100">
+    <div class="w-full max-w-sm bg-white rounded-xl shadow-lg px-6 py-8 border border-slate-200">
         <!-- Logo + titre -->
         <div class="flex flex-col items-center mb-6">
-            <img src="{{ asset('images/ChatGPT Image 31 juil. 2025, 00_39_29.png') }}" alt="Logo Supply" class="w-14 h-14 mb-3">
-            <h2 class="text-2xl font-bold text-gray-900">Connexion</h2>
-            <p class="text-sm text-gray-500 mt-1">Accédez à votre compte pour gérer vos activités</p>
+            <div class="w-14 h-14 mb-3 bg-slate-800 rounded-lg shadow-lg flex items-center justify-center">
+                <img src="{{ asset('images/ChatGPT Image 31 juil. 2025, 00_39_29.png') }}" alt="Logo Supply" class="w-10 h-10 object-contain">
+            </div>
+            <h2 class="text-2xl font-bold text-slate-800">Connexion</h2>
+            <p class="text-sm text-slate-600 mt-1">Accédez à votre compte pour gérer vos activités</p>
         </div>
 
         <!-- Lien vers inscription -->
@@ -76,7 +78,7 @@
             </div>
 
             <button type="submit"
-                class="w-full mt-2 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white py-2.5 rounded-lg font-semibold shadow-md transition-all duration-200">
+                class="w-full mt-2 bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200">
                 Se connecter
             </button>
         </form>

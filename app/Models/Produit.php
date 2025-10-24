@@ -36,4 +36,8 @@ class Produit extends Model
     public function reservations() {
         return $this->hasMany(Reservation::class, 'idProduit');
     }
+
+    public function lignes() {
+        return $this->hasMany(LigneCommande::class, 'idProduit', 'idProduit');
+    }
 }

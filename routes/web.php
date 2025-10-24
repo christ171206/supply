@@ -122,15 +122,8 @@ Route::group(['middleware' => ['web', 'auth', \App\Http\Middleware\IsVendeur::cl
         
         // Profil vendeur
         Route::prefix('profile')->group(function () {
-            Route::get('/', [App\Http\Controllers\Vendeur\ProfileController::class, 'profile'])->name('vendeur.profile');
-            Route::put('/', [App\Http\Controllers\Vendeur\ProfileController::class, 'updateProfile'])->name('vendeur.profile.update');
-            Route::post('/quick-update', [App\Http\Controllers\Vendeur\ProfileController::class, 'quickUpdate'])->name('vendeur.profile.quick-update');
-            Route::post('/avatar', [App\Http\Controllers\Vendeur\ProfileController::class, 'updateAvatar'])->name('vendeur.profile.avatar');
-            Route::put('/password', [App\Http\Controllers\Vendeur\ProfileController::class, 'updatePassword'])->name('vendeur.profile.password');
-            Route::post('/cni', [App\Http\Controllers\Vendeur\ProfileController::class, 'updateCNI'])->name('vendeur.profile.cni');
-            Route::post('/deactivate', [App\Http\Controllers\Vendeur\ProfileController::class, 'deactivateAccount'])->name('vendeur.profile.deactivate');
-            Route::delete('/', [App\Http\Controllers\Vendeur\ProfileController::class, 'deleteAccount'])->name('vendeur.profile.delete');
-            Route::post('/logout-all', [App\Http\Controllers\Vendeur\ProfileController::class, 'logoutAllDevices'])->name('vendeur.profile.logout-all');
+            Route::get('/', [App\Http\Controllers\Vendeur\ProfilController::class, 'show'])->name('vendeur.profil');
+            Route::put('/', [App\Http\Controllers\Vendeur\ProfilController::class, 'update'])->name('vendeur.profil.update');
         });
         
         // Paramètres

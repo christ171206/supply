@@ -24,13 +24,13 @@
             <div class="card">
                 <div class="card-body text-center">
                     <div class="position-relative mb-4 mx-auto" style="width: 150px;">
-                        <img src="{{ auth()->user()->avatar_url ?? asset('images/default-avatar.png') }}" 
-                             alt="Photo de profil" 
-                             class="rounded-circle img-thumbnail" 
+                        <img src="{{ auth()->user()->avatar_url ?? asset('images/default-avatar.png') }}"
+                             alt="Photo de profil"
+                             class="rounded-circle img-thumbnail"
                              style="width: 150px; height: 150px; object-fit: cover;">
-                        <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle" 
+                        <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle"
                                 style="width: 32px; height: 32px;"
-                                data-bs-toggle="modal" 
+                                data-bs-toggle="modal"
                                 data-bs-target="#avatarModal">
                             <i class="fas fa-camera"></i>
                         </button>
@@ -63,7 +63,7 @@
                     <form action="{{ route('vendeur.profile.update') }}" method="POST">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Nom complet</label>
@@ -110,7 +110,7 @@
                     <form action="{{ route('vendeur.profile.update') }}" method="POST">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Nom de la boutique</label>
@@ -144,7 +144,7 @@
                     <form action="{{ route('vendeur.profile.password') }}" method="POST" class="mb-4">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Mot de passe actuel</label>
