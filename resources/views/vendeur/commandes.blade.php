@@ -8,18 +8,22 @@
         <!-- Filtre des commandes -->
         <div class="col-span-3 bg-white rounded-lg shadow-sm p-4">
             <div class="flex flex-wrap gap-4">
-                <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    Toutes (45)
-                </button>
-                <button class="px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    En attente (8)
-                </button>
-                <button class="px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    En cours (12)
-                </button>
-                <button class="px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                    Livrées (25)
-                </button>
+                <a href="{{ route('vendeur.commandes') }}"
+                   class="px-4 py-2 {{ !request('statut') ? 'bg-blue-600 text-white' : 'bg-white text-gray-700' }} rounded-lg hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Toutes ({{ $stats['total'] ?? 0 }})
+                </a>
+                <a href="{{ route('vendeur.commandes', ['statut' => 'en_attente']) }}"
+                   class="px-4 py-2 {{ request('statut') === 'en_attente' ? 'bg-yellow-600 text-white' : 'bg-white text-gray-700' }} rounded-lg hover:bg-yellow-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
+                    En attente ({{ $stats['en_attente'] ?? 0 }})
+                </a>
+                <a href="{{ route('vendeur.commandes', ['statut' => 'en_cours']) }}"
+                   class="px-4 py-2 {{ request('statut') === 'en_cours' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700' }} rounded-lg hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+                    En cours ({{ $stats['en_cours'] ?? 0 }})
+                </a>
+                <a href="{{ route('vendeur.commandes', ['statut' => 'livree']) }}"
+                   class="px-4 py-2 {{ request('statut') === 'livree' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }} rounded-lg hover:bg-green-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                    Livrées ({{ $stats['livrees'] ?? 0 }})
+                </a>
             </div>
         </div>
 
@@ -50,41 +54,77 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Exemple de commande -->
+                @forelse($commandes as $commande)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">#CMD-001</div>
-                        <div class="text-sm text-gray-500">3 articles</div>
+                        <div class="text-sm font-medium text-gray-900">#{{ $commande->reference }}</div>
+                        <div class="text-sm text-gray-500">{{ $commande->lignes->count() }} article(s)</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10">
-                                <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=John+Doe" alt="">
+                                <img class="h-10 w-10 rounded-full"
+                                     src="https://ui-avatars.com/api/?name={{ urlencode($commande->client->nom) }}"
+                                     alt="{{ $commande->client->nom }}">
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">John Doe</div>
-                                <div class="text-sm text-gray-500">john@example.com</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $commande->client->nom }}</div>
+                                <div class="text-sm text-gray-500">{{ $commande->client->email }}</div>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">22 Oct. 2025</div>
-                        <div class="text-sm text-gray-500">14:30</div>
+                        <div class="text-sm text-gray-900">{{ $commande->dateCommande->format('d M. Y') }}</div>
+                        <div class="text-sm text-gray-500">{{ $commande->dateCommande->format('H:i') }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">75,000 FCFA</div>
+                        <div class="text-sm font-medium text-gray-900">{{ number_format($commande->total, 0, ',', ' ') }} FCFA</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                            En attente
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            @if($commande->statut === 'en_attente') bg-yellow-100 text-yellow-800
+                            @elseif($commande->statut === 'en_cours') bg-blue-100 text-blue-800
+                            @elseif($commande->statut === 'livree') bg-green-100 text-green-800
+                            @else bg-red-100 text-red-800
+                            @endif">
+                            {{ ucfirst(str_replace('_', ' ', $commande->statut)) }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="showOrderDetails('CMD-001')" class="text-blue-600 hover:text-blue-900 mr-3">Voir détails</button>
-                        <button class="text-green-600 hover:text-green-900">Valider</button>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button onclick="showOrderDetails('{{ $commande->idCommande }}')"
+                                class="text-blue-600 hover:text-blue-900">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                        @if($commande->statut === 'en_attente')
+                        <button onclick="updateOrderStatus('{{ $commande->idCommande }}', 'en_cours')"
+                                class="text-green-600 hover:text-green-900"
+                                title="Valider la commande">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </button>
+                        @endif
+                        @if($commande->statut === 'en_cours')
+                        <button onclick="updateOrderStatus('{{ $commande->idCommande }}', 'livree')"
+                                class="text-indigo-600 hover:text-indigo-900"
+                                title="Marquer comme livrée">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7m-4 4v10H5V7h10m4-4v4m0 0h4m-4 0H7"/>
+                            </svg>
+                        </button>
+                        @endif
                     </td>
                 </tr>
-                <!-- Fin exemple de commande -->
+                @empty
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        Aucune commande trouvée
+                    </td>
+                </tr>
+                @endforelse
 
                 <!-- Plus de commandes peuvent être ajoutées ici -->
             </tbody>
@@ -156,29 +196,7 @@
             </button>
         </div>
 
-        <div class="mt-4">
-            <!-- Informations client -->
-            <div class="mb-6">
-                <h4 class="text-lg font-medium mb-2">Informations client</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Nom</p>
-                        <p class="font-medium">John Doe</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Email</p>
-                        <p class="font-medium">john@example.com</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Téléphone</p>
-                        <p class="font-medium">+225 0123456789</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Adresse de livraison</p>
-                        <p class="font-medium">123 Rue Example, Abidjan</p>
-                    </div>
-                </div>
-            </div>
+       
 
             <!-- Articles commandés -->
             <div class="mb-6">
@@ -251,12 +269,53 @@
 
 @push('scripts')
 <script>
-    function showOrderDetails(orderId) {
-        document.getElementById('orderDetailsModal').classList.remove('hidden');
+    async function showOrderDetails(orderId) {
+        try {
+            const response = await fetch(`/vendeur/commandes/${orderId}`);
+            const data = await response.json();
+
+            if (data.html) {
+                const modalContent = document.getElementById('orderDetailsModal');
+                modalContent.innerHTML = data.html;
+                modalContent.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des détails:', error);
+            alert('Une erreur est survenue lors du chargement des détails de la commande.');
+        }
     }
 
     function closeOrderDetails() {
         document.getElementById('orderDetailsModal').classList.add('hidden');
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+        if (!confirm('Êtes-vous sûr de vouloir modifier le statut de cette commande ?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/vendeur/commandes/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ statut: newStatus })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Recharger la page pour montrer le nouveau statut
+                window.location.reload();
+            } else {
+                alert(data.message || 'Une erreur est survenue lors de la mise à jour du statut.');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du statut:', error);
+            alert('Une erreur est survenue lors de la mise à jour du statut.');
+        }
     }
 
     // Fermer le modal quand on clique en dehors
@@ -266,5 +325,18 @@
             modal.classList.add('hidden');
         }
     }
+
+    // Recherche en temps réel
+    const searchInput = document.querySelector('input[type="text"]');
+    let timeoutId;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('search', this.value);
+            window.location.search = searchParams.toString();
+        }, 500);
+    });
 </script>
 @endpush

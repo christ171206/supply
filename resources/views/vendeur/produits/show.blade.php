@@ -65,7 +65,7 @@
                         </div>
                         <div>
                             <h3 class="text-sm font-medium text-gray-500">Date d'ajout</h3>
-                            <p class="mt-1 text-gray-900">{{ $produit->dateAjout ? $produit->dateAjout->format('d/m/Y') : 'Non définie' }}</p>
+                            <p class="mt-1 text-gray-900">{{ $produit->dateAjout ? Carbon\Carbon::parse($produit->dateAjout)->format('d/m/Y') : 'Non définie' }}</p>
                         </div>
                     </div>
 

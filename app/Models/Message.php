@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Utilisateur;
 
 class Message extends Model
 {
@@ -31,7 +32,7 @@ class Message extends Model
 
     public function expediteur()
     {
-        return $this->belongsTo(User::class, 'expediteur_id');
+        return $this->belongsTo(Utilisateur::class, 'expediteur_id');
     }
 
     public function produit()

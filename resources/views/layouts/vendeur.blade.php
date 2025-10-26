@@ -438,7 +438,7 @@
                                     <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->nom) }}"
                                          alt="Profile"
                                          class="w-10 h-10 rounded-full ring-2 ring-indigo-500/50 group-hover:ring-indigo-500 transition-all duration-200">
-                                    @if(auth()->user()->vendeur->statut_verification === 'verifie')
+                                    @if(auth()->user()->vendeur && auth()->user()->vendeur->statut_verification === 'verifie')
                                         <div class="absolute -bottom-1 -right-1 bg-emerald-500 text-white rounded-full p-1 shadow-lg shadow-emerald-500/50">
                                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -448,7 +448,7 @@
                                 </div>
                                 <div class="text-left">
                                     <div class="text-sm font-semibold text-gray-700">{{ Auth::user()->nom }}</div>
-                                    <div class="text-xs text-gray-500">{{ Auth::user()->vendeur->nom_boutique ?? 'Ma Boutique' }}</div>
+                                    <div class="text-xs text-gray-500">{{ Auth::user()->vendeur ? Auth::user()->vendeur->nom_boutique : 'Ma Boutique' }}</div>
                                 </div>
                                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -570,12 +570,21 @@
                                 </div>
 
                                 <!-- Statut de la boutique -->
+                                @if(Auth::user()->vendeur)
                                 <div class="px-4 py-2 border-b">
                                     <div class="flex items-center text-sm">
                                         <div class="w-3 h-3 rounded-full {{ Auth::user()->vendeur->statut === 'actif' ? 'bg-green-500' : 'bg-yellow-500' }} mr-2"></div>
                                         <span class="text-gray-600">Boutique {{ Auth::user()->vendeur->statut === 'actif' ? 'active' : 'en pause' }}</span>
                                     </div>
                                 </div>
+                                @else
+                                <div class="px-4 py-2 border-b">
+                                    <div class="flex items-center text-sm">
+                                        <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                                        <span class="text-gray-600">Boutique non configurée</span>
+                                    </div>
+                                </div>
+                                @endif
 
                                 <!-- Actions -->
                                 <div class="px-2 py-2">

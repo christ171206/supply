@@ -10,8 +10,10 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('vendeur_id')->constrained('users')->onDelete('cascade');
+            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('vendeur_id');
+            $table->foreign('client_id')->references('id')->on('utilisateurs')->onDelete('cascade');
+            $table->foreign('vendeur_id')->references('id')->on('utilisateurs')->onDelete('cascade');
             $table->timestamps();
         });
     }

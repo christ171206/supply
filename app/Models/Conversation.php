@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Utilisateur;
 
 class Conversation extends Model
 {
@@ -16,12 +17,12 @@ class Conversation extends Model
 
     public function client()
     {
-        return $this->belongsTo(User::class, 'client_id');
+        return $this->belongsTo(Utilisateur::class, 'client_id');
     }
 
     public function vendeur()
     {
-        return $this->belongsTo(User::class, 'vendeur_id');
+        return $this->belongsTo(Utilisateur::class, 'vendeur_id');
     }
 
     public function messages()

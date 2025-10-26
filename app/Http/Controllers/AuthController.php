@@ -45,7 +45,7 @@ class AuthController extends Controller
                            ->with('info', 'Veuillez compléter la vérification de votre identité pour accéder à votre compte vendeur.');
         }
 
-        return redirect('/dashboard');
+        return redirect()->route('dashboard');
     }
 
     // 🔹 Affiche le formulaire de connexion
@@ -68,25 +68,8 @@ class AuthController extends Controller
             if ($user && Hash::check($credentials['password'], $user->motDePasse)) {
                 Auth::login($user);
                 
-                // Récupérer l'URL prévue si elle existe
-                $intendedUrl = session()->get('url.intended');
-                
-                // Si aucune URL prévue, rediriger selon le rôle
-                if (!$intendedUrl) {
-                    switch ($user->role) {
-                        case 'admin':
-                            return redirect()->route('admin.dashboard');
-                        case 'vendeur':
-                            return redirect()->route('vendeur.dashboard');
-                        case 'client':
-                            return redirect()->route('client.dashboard');
-                        default:
-                            return redirect('/');
-                    }
-                }
-                
-                // Rediriger vers l'URL prévue
-                return redirect()->intended(route('client.dashboard'));
+                // Rediriger vers le dashboard qui s'occupera de router vers le bon endroit
+                return redirect()->intended(route('dashboard'));
             }
 
             return back()

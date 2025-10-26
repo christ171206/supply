@@ -27,14 +27,18 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
         </div>
-        <div>
-            <select class="w-full px-4 py-2 border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-600 transition-colors">
-                <option value="">Toutes les catégories</option>
-                <option value="electronique">Électronique</option>
-                <option value="vetements">Vêtements</option>
-                <option value="alimentation">Alimentation</option>
-            </select>
-        </div>
+        <form action="{{ route('vendeur.produits') }}" method="GET" class="flex-1">
+            <div>
+                <select name="categorie" onchange="this.form.submit()" class="w-full px-4 py-2 border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-600 transition-colors">
+                    <option value="">Toutes les catégories</option>
+                    @foreach($categories as $categorie)
+                        <option value="{{ $categorie->idCategorie }}" {{ request('categorie') == $categorie->idCategorie ? 'selected' : '' }}>
+                            {{ $categorie->nom }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </form>
         <div>
             <select class="w-full px-4 py-2 border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-600 transition-colors">
                 <option value="">Tous les statuts</option>
@@ -67,39 +71,76 @@
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
+            @forelse ($produits as $produit)
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
                         <div class="h-10 w-10 flex-shrink-0">
-                            <img class="h-10 w-10 rounded-lg object-cover" src="https://via.placeholder.com/150" alt="Product image">
+                                <img class="h-10 w-10 rounded-lg object-cover" 
+                                 src="{{ $produit->image ? Storage::url($produit->image) : asset('images/default-product.png') }}" 
+                                 alt="{{ $produit->nom }}">
                         </div>
                         <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-900">iPhone 12 Pro</div>
-                            <div class="text-sm text-gray-500">Smartphone Apple</div>
+                            <div class="text-sm font-medium text-gray-900">{{ $produit->nom }}</div>
+                            <div class="text-sm text-gray-500">Réf: {{ $produit->reference }}</div>
                         </div>
                     </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">Électronique</div>
+                    <div class="text-sm text-gray-900">{{ $produit->categorie->nom ?? 'Non catégorisé' }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">899,000 FCFA</div>
+                    <div class="text-sm text-gray-900">{{ number_format($produit->prix, 0, ',', ' ') }} FCFA</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900">15</div>
+                    <div class="text-sm text-gray-900">{{ $produit->stock }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        En stock
-                    </span>
+                    @if($produit->stock > 10)
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            En stock
+                        </span>
+                    @elseif($produit->stock > 0)
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            Stock faible
+                        </span>
+                    @else
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            Rupture
+                        </span>
+                    @endif
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div class="flex space-x-3">
-                        <button class="text-sky-600 hover:text-sky-800 transition-colors">Modifier</button>
-                        <button class="text-rose-600 hover:text-rose-800 transition-colors">Supprimer</button>
+                        <a href="{{ route('vendeur.produits.edit', $produit) }}" 
+                           class="text-sky-600 hover:text-sky-800 transition-colors">
+                            Modifier
+                        </a>
+                        <form action="{{ route('vendeur.produits.destroy', $produit) }}" 
+                              method="POST" 
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-rose-600 hover:text-rose-800 transition-colors">
+                                Supprimer
+                            </button>
+                        </form>
                     </div>
                 </td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="px-6 py-10 text-center">
+                    <div class="flex flex-col items-center justify-center text-slate-500">
+                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                        </svg>
+                        <p class="text-lg font-medium">Aucun produit trouvé</p>
+                        <p class="mt-1">Commencez par ajouter votre premier produit</p>
+                    </div>
+                </td>
+            </tr>
+            @endforelse
             <!-- Plus de lignes de produits peuvent être ajoutées ici -->
         </tbody>
     </table>
@@ -118,45 +159,11 @@
             <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                     <p class="text-sm text-gray-700">
-                        Affichage de <span class="font-medium">1</span> à <span class="font-medium">10</span> sur <span class="font-medium">97</span> résultats
+                        Affichage de <span class="font-medium">{{ $produits->firstItem() }}</span> à <span class="font-medium">{{ $produits->lastItem() }}</span> sur <span class="font-medium">{{ $produits->total() }}</span> résultats
                     </p>
                 </div>
                 <div>
-                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span class="sr-only">Précédent</span>
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            1
-                        </a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            2
-                        </a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            3
-                        </a>
-                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-gray-50 text-sm font-medium text-gray-700">
-                            ...
-                        </span>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            8
-                        </a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            9
-                        </a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            10
-                        </a>
-                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span class="sr-only">Suivant</span>
-                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                    </nav>
+                    {{ $produits->links() }}
                 </div>
             </div>
         </div>
@@ -183,91 +190,133 @@
             </button>
         </div>
 
-        <form>
+        <form action="{{ route('vendeur.produits.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
             <div class="mt-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-slate-700 text-sm font-medium mb-2" for="name">
-                            Nom du produit
+                        <label class="block text-slate-700 text-sm font-medium mb-2" for="nom">
+                            Nom du produit *
                         </label>
                         <input class="w-full py-2 px-3 border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-700 transition-colors" 
-                               id="name" 
+                               id="nom" 
+                               name="nom"
                                type="text" 
+                               value="{{ old('nom') }}"
+                               required
                                placeholder="Nom du produit">
+                        @error('nom')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
-                        <label class="block text-slate-700 text-sm font-medium mb-2" for="category">
-                            Catégorie
+                        <label class="block text-slate-700 text-sm font-medium mb-2" for="idCategorie">
+                            Catégorie *
                         </label>
                         <select class="w-full py-2 px-3 border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-700 transition-colors" 
-                                id="category">
-                            <option>Sélectionnez une catégorie</option>
-                            <option>Électronique</option>
-                            <option>Vêtements</option>
-                            <option>Alimentation</option>
+                                id="idCategorie"
+                                name="idCategorie"
+                                required>
+                            <option value="">Sélectionnez une catégorie</option>
+                            @foreach($categories as $categorie)
+                                <option value="{{ $categorie->idCategorie }}" {{ old('idCategorie') == $categorie->idCategorie ? 'selected' : '' }}>
+                                    {{ $categorie->nom }}
+                                </option>
+                            @endforeach
                         </select>
+                        @error('idCategorie')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-slate-700 text-sm font-medium mb-2" for="price">
-                            Prix
+                        <label class="block text-slate-700 text-sm font-medium mb-2" for="prix">
+                            Prix *
                         </label>
                         <div class="relative">
                             <input class="w-full py-2 px-3 pl-16 border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-700 transition-colors" 
-                                   id="price" 
-                                   type="number" 
+                                   id="prix" 
+                                   name="prix"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   value="{{ old('prix') }}"
+                                   required
                                    placeholder="0">
                             <div class="absolute inset-y-0 left-0 px-3 flex items-center pointer-events-none text-slate-500 border-r border-slate-300">
                                 FCFA
                             </div>
                         </div>
+                        @error('prix')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label class="block text-slate-700 text-sm font-medium mb-2" for="stock">
-                            Stock initial
+                            Stock initial *
                         </label>
                         <input class="w-full py-2 px-3 border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-700 transition-colors" 
                                id="stock" 
-                               type="number" 
+                               name="stock"
+                               type="number"
+                               min="0"
+                               value="{{ old('stock', 0) }}"
+                               required
                                placeholder="Quantité en stock">
+                        @error('stock')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-slate-700 text-sm font-medium mb-2" for="description">
-                        Description
+                        Description *
                     </label>
                     <textarea class="w-full py-2 px-3 border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-slate-700 transition-colors" 
-                              id="description" 
-                              rows="3" 
-                              placeholder="Description du produit"></textarea>
+                              id="description"
+                              name="description"
+                              rows="3"
+                              required
+                              placeholder="Description du produit">{{ old('description') }}</textarea>
+                    @error('description')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
                     <label class="block text-slate-700 text-sm font-medium mb-2" for="image">
-                        Image du produit
+                        Image du produit *
                     </label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-lg hover:border-sky-500 transition-colors">
                         <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <div class="flex text-sm text-slate-600">
+                            <div id="preview-container" class="hidden mb-4">
+                                <img id="preview" src="#" alt="Aperçu de l'image" class="mx-auto h-32 w-32 object-cover rounded-lg">
+                            </div>
+                            <div id="upload-icon">
+                                <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <div class="flex text-sm text-slate-600 justify-center">
                                 <label for="image" class="relative cursor-pointer rounded-md font-medium text-sky-600 hover:text-sky-500">
                                     <span>Télécharger une image</span>
-                                    <input id="image" type="file" class="sr-only">
+                                    <input id="image" name="image" type="file" class="sr-only" accept="image/png,image/jpeg,image/gif" required onchange="previewImage(this)">
                                 </label>
                                 <p class="pl-1">ou glisser-déposer</p>
                             </div>
                             <p class="text-xs text-slate-500">
-                                PNG, JPG jusqu'à 10MB
+                                PNG, JPG, GIF jusqu'à 2MB
                             </p>
                         </div>
                     </div>
+                    @error('image')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
@@ -308,6 +357,68 @@
         if (event.target == modal) {
             modal.classList.add('hidden');
         }
+    }
+
+    // Prévisualisation de l'image
+    function previewImage(input) {
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('preview-container');
+        const uploadIcon = document.getElementById('upload-icon');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+                uploadIcon.classList.add('hidden');
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = '';
+            previewContainer.classList.add('hidden');
+            uploadIcon.classList.remove('hidden');
+        }
+    }
+
+    // Support du glisser-déposer
+    const dropZone = document.querySelector('.border-dashed');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        dropZone.classList.add('border-sky-500');
+    }
+
+    function unhighlight(e) {
+        dropZone.classList.remove('border-sky-500');
+    }
+
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        const input = document.getElementById('image');
+        
+        input.files = files;
+        previewImage(input);
     }
 </script>
 @endpush

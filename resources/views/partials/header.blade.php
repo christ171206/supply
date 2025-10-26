@@ -87,7 +87,7 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('vendeur.profile') }}">
+                                <a class="dropdown-item" href="{{ route('vendeur.profil') }}">
                                     <i class="fas fa-user me-2"></i> Mon profil
                                 </a>
                             </li>

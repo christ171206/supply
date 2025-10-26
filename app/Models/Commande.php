@@ -14,7 +14,7 @@ class Commande extends Model
 
     protected $fillable = [
         'dateCommande', 'total', 'statut', 'moyenPaiement', 'adresseLivraison',
-        'idClient', 'idVendeur'
+        'idClient', 'vendeur_id'
     ];
 
     // 🔗 Relations
@@ -23,7 +23,7 @@ class Commande extends Model
     }
 
     public function vendeur() {
-        return $this->belongsTo(Vendeur::class, 'idVendeur');
+        return $this->belongsTo(Vendeur::class, 'vendeur_id');
     }
 
     public function lignes() {

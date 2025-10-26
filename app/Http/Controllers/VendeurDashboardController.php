@@ -7,18 +7,30 @@ use App\Models\Commande;
 use App\Models\LigneCommande;
 use App\Models\Paiement;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class VendeurDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $vendeur = Auth::user();
 
+        // Gestion des périodes pour les statistiques
+        $periode = $request->input('statsPeriode', 'today');
+        $startDate = match($periode) {
+            'today' => now()->startOfDay(),
+            'week' => now()->startOfWeek(),
+            'month' => now()->startOfMonth(),
+            'year' => now()->startOfYear(),
+            default => now()->startOfDay(),
+        };
+
         // Récupérer les statistiques
         $stats = [
-            'chiffre_affaires' => $this->getChiffreAffaires(),
-            'total_commandes' => $this->getTotalCommandes(),
+            'chiffre_affaires' => $this->getChiffreAffaires($startDate),
+            'total_commandes' => $this->getTotalCommandes($startDate),
             'total_produits' => $this->getTotalProduits(),
             'produits_rupture' => $this->getProduitsEnRupture()
         ];
@@ -35,54 +47,65 @@ class VendeurDashboardController extends Controller
         ->get();
 
         // Récupérer les dernières commandes
-        $dernieres_commandes = Commande::where('idVendeur', $vendeur->id)
+        $dernieres_commandes = Commande::where('vendeur_id', $vendeur->id)
             ->with(['client', 'lignes.produit'])
             ->orderBy('dateCommande', 'desc')
             ->take(5)
             ->get();
 
         // Récupérer les produits en rupture de stock
-        $produits_rupture = Produit::where('idVendeur', $vendeur->id)
+        $produits_rupture = Produit::where('vendeur_id', $vendeur->id)
             ->where('stock', '<', 5)
             ->get();
 
         // Récupérer les meilleures ventes
         $meilleures_ventes = $this->getMeilleuresVentes();
 
-        return view('vendeur.dashboard', compact(
+        // Données pour les graphiques
+    $salesChart = $this->getSalesChartData(now()->subDays(7), now());
+
+    return view('vendeur.dashboard', compact(
             'stats',
             'dernieres_commandes',
             'produits_rupture',
             'meilleures_ventes',
-            'messages_recents'
+            'messages_recents',
+            'salesChart'
         ));
     }
 
-    private function getChiffreAffaires()
+    private function getChiffreAffaires($startDate = null)
     {
-        $debut_mois = Carbon::now()->startOfMonth();
-        return Paiement::whereHas('commande', function($query) {
+        $query = Paiement::whereHas('commande', function($query) {
             $query->where('idVendeur', Auth::id());
-        })
-        ->where('datePaiement', '>=', $debut_mois)
-        ->sum('montant');
+        });
+
+        if ($startDate) {
+            $query->where('datePaiement', '>=', $startDate);
+        }
+
+        return $query->sum('montant');
     }
 
-    private function getTotalCommandes()
+    private function getTotalCommandes($startDate = null)
     {
-        return Commande::where('idVendeur', Auth::id())
-            ->where('dateCommande', '>=', Carbon::now()->startOfMonth())
-            ->count();
+        $query = Commande::where('idVendeur', Auth::id());
+
+        if ($startDate) {
+            $query->where('dateCommande', '>=', $startDate);
+        }
+
+        return $query->count();
     }
 
     private function getTotalProduits()
     {
-        return Produit::where('idVendeur', Auth::id())->count();
+        return Produit::where('vendeur_id', Auth::id())->count();
     }
 
     private function getProduitsEnRupture()
     {
-        return Produit::where('idVendeur', Auth::id())
+        return Produit::where('vendeur_id', Auth::id())
             ->where('stock', '<', 5)
             ->count();
     }
@@ -102,7 +125,7 @@ class VendeurDashboardController extends Controller
 
     public function produits(Request $request)
     {
-        $query = Produit::where('idVendeur', Auth::id());
+        $query = Produit::where('vendeur_id', Auth::id())->with('categorie');
 
         // Filtrage par catégorie
         if ($request->filled('categorie')) {
@@ -133,19 +156,45 @@ class VendeurDashboardController extends Controller
         }
 
         // Tri
-        $sortField = $request->input('sort', 'dateAjout');
+        $sortField = $request->input('sort', 'created_at');
         $sortDirection = $request->input('direction', 'desc');
-        $query->orderBy($sortField, $sortDirection);
+        
+        switch ($sortField) {
+            case 'nom':
+            case 'prix':
+            case 'stock':
+                $query->orderBy($sortField, $sortDirection);
+                break;
+            case 'dateAjout':
+            default:
+                $query->orderBy('created_at', $sortDirection);
+                break;
+        }
 
+        // Limiter à 10 produits par page et préserver les paramètres de requête
         $produits = $query->paginate(10)->withQueryString();
+        
+        // Récupérer toutes les catégories pour le filtre
         $categories = \App\Models\Categorie::all();
 
-        return view('vendeur.produits', compact('produits', 'categories'));
+        // Statistiques des produits
+        $stats = [
+            'total' => Produit::where('vendeur_id', Auth::id())->count(),
+            'en_rupture' => Produit::where('vendeur_id', Auth::id())->where('stock', 0)->count(),
+            'stock_faible' => Produit::where('vendeur_id', Auth::id())->where('stock', '>', 0)->where('stock', '<=', 5)->count(),
+        ];
+
+        // Si aucun produit n'est trouvé, réinitialiser la pagination à la page 1
+        if ($produits->isEmpty() && $request->page > 1) {
+            return redirect()->route('vendeur.produits');
+        }
+
+        return view('vendeur.produits', compact('produits', 'categories', 'stats'));
     }
 
     public function createProduit()
     {
-        $categories = \App\Models\Categorie::all();
+        $categories = \App\Models\Categorie::orderBy('nom')->get();
         return view('vendeur.produits.create', compact('categories'));
     }
 
@@ -161,13 +210,27 @@ class VendeurDashboardController extends Controller
             'reference' => 'nullable|string|unique:produits,reference',
             'poids' => 'nullable|numeric|min:0',
             'dimensions' => 'nullable|string',
-            'caracteristiques' => 'nullable|array'
+            'slug' => 'nullable|string|unique:produits,slug'
+        ], [
+            'nom.required' => 'Le nom du produit est requis',
+            'nom.max' => 'Le nom ne doit pas dépasser 255 caractères',
+            'description.required' => 'La description est requise',
+            'prix.required' => 'Le prix est requis',
+            'prix.numeric' => 'Le prix doit être un nombre',
+            'prix.min' => 'Le prix doit être positif',
+            'stock.required' => 'Le stock est requis',
+            'stock.integer' => 'Le stock doit être un nombre entier',
+            'stock.min' => 'Le stock doit être positif',
+            'idCategorie.required' => 'La catégorie est requise',
+            'idCategorie.exists' => 'Cette catégorie n\'existe pas',
+            'image.required' => 'L\'image est requise',
+            'image.image' => 'Le fichier doit être une image',
+            'image.mimes' => 'L\'image doit être au format JPEG, PNG, JPG ou GIF',
+            'image.max' => 'L\'image ne doit pas dépasser 2MB',
+            'reference.unique' => 'Cette référence existe déjà',
+            'poids.numeric' => 'Le poids doit être un nombre',
+            'poids.min' => 'Le poids doit être positif'
         ]);
-
-        // Générer une référence unique si non fournie
-        if (empty($validated['reference'])) {
-            $validated['reference'] = 'PROD-' . uniqid();
-        }
 
         // Traiter l'image
         if ($request->hasFile('image')) {
@@ -175,19 +238,26 @@ class VendeurDashboardController extends Controller
             $validated['image'] = $imagePath;
         }
 
-        // Ajouter l'ID du vendeur
-        $validated['idVendeur'] = Auth::id();
-        $validated['dateAjout'] = now();
+        // Ajouter l'ID du vendeur et autres champs nécessaires
+        $validated['vendeur_id'] = Auth::id();
+        
+        // Générer un slug unique
+        $baseSlug = Str::slug($validated['nom']);
+        $counter = 1;
+        $slug = $baseSlug;
+        
+        while (Produit::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+        $validated['slug'] = $slug;
+        
+        if (empty($validated['reference'])) {
+            $validated['reference'] = 'PROD-' . uniqid();
+        }
 
         // Créer le produit
         $produit = Produit::create($validated);
-
-        // Logger l'activité
-        activity()
-            ->performedOn($produit)
-            ->causedBy(Auth::user())
-            ->withProperties(['action' => 'create'])
-            ->log('Nouveau produit créé');
 
         return redirect()
             ->route('vendeur.produits.show', $produit)
@@ -250,13 +320,6 @@ class VendeurDashboardController extends Controller
         // Mettre à jour le produit
         $produit->update($validated);
 
-        // Logger l'activité
-        activity()
-            ->performedOn($produit)
-            ->causedBy(Auth::user())
-            ->withProperties(['action' => 'update'])
-            ->log('Produit mis à jour');
-
         return redirect()
             ->route('vendeur.produits.show', $produit)
             ->with('success', 'Produit mis à jour avec succès');
@@ -268,7 +331,7 @@ class VendeurDashboardController extends Controller
 
         // Vérifier si le produit a des commandes en cours
         if ($produit->lignes()->whereHas('commande', function($query) {
-            $query->whereIn('status', ['en_cours', 'en_preparation']);
+            $query->whereIn('statut', ['en_cours', 'en_preparation']);
         })->exists()) {
             return back()->with('error', 'Impossible de supprimer un produit ayant des commandes en cours');
         }
@@ -277,13 +340,6 @@ class VendeurDashboardController extends Controller
         if ($produit->image) {
             Storage::disk('public')->delete($produit->image);
         }
-
-        // Logger l'activité avant la suppression
-        activity()
-            ->performedOn($produit)
-            ->causedBy(Auth::user())
-            ->withProperties(['action' => 'delete'])
-            ->log('Produit supprimé');
 
         $produit->delete();
 
@@ -294,14 +350,14 @@ class VendeurDashboardController extends Controller
 
     private function authorizeProduct(Produit $produit)
     {
-        if ($produit->idVendeur !== Auth::id()) {
+        if ($produit->vendeur_id !== Auth::id()) {
             abort(403, 'Vous n\'êtes pas autorisé à accéder à ce produit');
         }
     }
 
     public function commandes()
     {
-        $commandes = Commande::where('idVendeur', Auth::id())
+        $commandes = Commande::where('vendeur_id', Auth::id())
             ->with(['client', 'lignes.produit'])
             ->orderBy('dateCommande', 'desc')
             ->paginate(10);
@@ -312,7 +368,7 @@ class VendeurDashboardController extends Controller
     // Gestion des stocks
     public function stock()
     {
-        $produits = Produit::where('idVendeur', Auth::id())
+        $produits = Produit::where('vendeur_id', Auth::id())
             ->orderBy('stock')
             ->paginate(10);
 
@@ -485,10 +541,15 @@ class VendeurDashboardController extends Controller
             ->sum('quantite');
     }
 
-    private function getSalesChartData()
+    private function getSalesChartData($startDate, $endDate)
     {
-        $startDate = now()->subDays(30);
-        $endDate = now();
+        // Validation des dates
+        if (!$startDate) {
+            $startDate = now()->subDays(30);
+        }
+        if (!$endDate) {
+            $endDate = now();
+        }
 
         $ventes = Commande::where('idVendeur', Auth::id())
             ->where('dateCommande', '>=', $startDate)
@@ -512,8 +573,11 @@ class VendeurDashboardController extends Controller
         ];
     }
 
-    private function getCategoriesChartData($startDate)
+    private function getCategoriesChartData($startDate, $endDate = null)
     {
+        if (!$endDate) {
+            $endDate = now();
+        }
         $ventes_categories = LigneCommande::whereHas('commande', function($query) use ($startDate) {
                 $query->where('idVendeur', Auth::id())
                     ->where('dateCommande', '>=', $startDate);
@@ -535,7 +599,7 @@ class VendeurDashboardController extends Controller
     private function getMeilleursVendeurs($startDate)
     {
         return Produit::from('produits')
-            ->where('produits.idVendeur', Auth::id())
+            ->where('produits.vendeur_id', Auth::id())
             ->join('ligne_commandes', function($join) {
                 $join->on('produits.idProduit', '=', 'ligne_commandes.idProduit');
             })

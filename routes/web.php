@@ -45,8 +45,15 @@ Route::get('/reset-password-success', function () {
 
 // ✅ Zone protégée
 Route::middleware('auth')->group(function () {
+    // Rediriger /dashboard vers le bon dashboard selon le rôle
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $redirectRoute = match(Auth::user()->role) {
+            'admin' => 'admin.dashboard',
+            'vendeur' => 'vendeur.dashboard',
+            'client' => 'client.dashboard',
+            default => 'login'
+        };
+        return redirect()->route($redirectRoute);
     })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -93,7 +100,7 @@ Route::group(['middleware' => ['web', 'auth', \App\Http\Middleware\IsVendeur::cl
         Route::get('/produits/{produit}', [VendeurDashboardController::class, 'showProduit'])->name('vendeur.produits.show');
         Route::get('/produits/{produit}/edit', [VendeurDashboardController::class, 'editProduit'])->name('vendeur.produits.edit');
         Route::put('/produits/{produit}', [VendeurDashboardController::class, 'updateProduit'])->name('vendeur.produits.update');
-        Route::delete('/produits/{produit}', [VendeurDashboardController::class, 'deleteProduit'])->name('vendeur.produits.delete');
+        Route::delete('/produits/{produit}', [VendeurDashboardController::class, 'deleteProduit'])->name('vendeur.produits.destroy');
         
         // Gestion du stock
         Route::get('/stock', [VendeurDashboardController::class, 'stock'])->name('vendeur.stock');

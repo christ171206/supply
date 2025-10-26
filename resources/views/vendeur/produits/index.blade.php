@@ -10,8 +10,9 @@
             <h1 class="text-2xl font-bold text-gray-900">Produits</h1>
             <p class="mt-1 text-sm text-gray-500">Gérez votre catalogue de produits</p>
         </div>
-        <a href="{{ route('vendeur.produits.create') }}" class="btn btn-primary">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('vendeur.produits.create') }}" 
+           class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-sm text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
             </svg>
             Ajouter un produit
@@ -28,7 +29,7 @@
                     <div class="mt-1 relative rounded-md shadow-sm">
                         <input type="text" name="search" id="search"
                                value="{{ request('search') }}"
-                               class="form-input block w-full sm:text-sm"
+                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                placeholder="Nom ou référence du produit">
                     </div>
                 </div>
@@ -36,7 +37,8 @@
                 <!-- Filtrage par catégorie -->
                 <div>
                     <label for="categorie" class="block text-sm font-medium text-gray-700">Catégorie</label>
-                    <select name="categorie" id="categorie" class="mt-1 form-select block w-full sm:text-sm">
+                    <select name="categorie" id="categorie" 
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         <option value="">Toutes les catégories</option>
                         @foreach($categories as $categorie)
                             <option value="{{ $categorie->idCategorie }}" 
@@ -50,7 +52,8 @@
                 <!-- Filtrage par stock -->
                 <div>
                     <label for="stock" class="block text-sm font-medium text-gray-700">État du stock</label>
-                    <select name="stock" id="stock" class="mt-1 form-select block w-full sm:text-sm">
+                    <select name="stock" id="stock" 
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         <option value="">Tous les niveaux</option>
                         <option value="rupture" {{ request('stock') === 'rupture' ? 'selected' : '' }}>En rupture</option>
                         <option value="faible" {{ request('stock') === 'faible' ? 'selected' : '' }}>Stock faible</option>
@@ -62,20 +65,21 @@
             <!-- Tri -->
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
-                    <select name="sort" class="form-select text-sm">
+                    <select name="sort" class="text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         <option value="dateAjout" {{ request('sort') === 'dateAjout' ? 'selected' : '' }}>Date d'ajout</option>
                         <option value="nom" {{ request('sort') === 'nom' ? 'selected' : '' }}>Nom</option>
                         <option value="prix" {{ request('sort') === 'prix' ? 'selected' : '' }}>Prix</option>
                         <option value="stock" {{ request('sort') === 'stock' ? 'selected' : '' }}>Stock</option>
                     </select>
-                    <select name="direction" class="form-select text-sm">
+                    <select name="direction" class="text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         <option value="desc" {{ request('direction') === 'desc' ? 'selected' : '' }}>Décroissant</option>
                         <option value="asc" {{ request('direction') === 'asc' ? 'selected' : '' }}>Croissant</option>
                     </select>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-secondary">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="w-5 h-5 mr-2 -ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                         </svg>
                         Filtrer
@@ -104,7 +108,7 @@
                             <div class="flex items-center">
                                 @if($produit->image)
                                     <img class="h-10 w-10 rounded-lg object-cover" 
-                                         src="{{ Storage::url($produit->image) }}" 
+                                         src="{{ asset('storage/' . $produit->image) }}" 
                                          alt="{{ $produit->nom }}">
                                 @else
                                     <div class="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
