@@ -1,30 +1,37 @@
-<<<<<<< HEAD
-*
-!data/
-!.gitignore
-=======
+# Logs
 *.log
+
+# System files
 .DS_Store
+Thumbs.db
+
+# Env files
 .env
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
+
+# IDE / editor files
 /.idea
-/.nova
-/.phpunit.cache
 /.vscode
+/.phpunit.cache
+/.fleet
 /.zed
-/auth.json
+
+# Node / Composer
 /node_modules
+/vendor
+
+# Laravel build and storage
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+
+# Homestead
 Homestead.json
 Homestead.yaml
-Thumbs.db
->>>>>>> c61b1f7f107de3e487aa3108219fc6ffe3be9141
+
+# Keep data folder
+!data/
+!.gitignore
