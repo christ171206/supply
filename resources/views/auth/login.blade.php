@@ -4,124 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Supply</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite('resources/css/app.css')
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 to-sky-50 min-h-screen flex items-center justify-center font-sans">
+<body class="bg-gradient-to-br from-primary-50 to-blue-50 min-h-screen flex items-center justify-center font-sans">
 
     <!-- Carte centrée -->
-    <div class="w-full max-w-sm bg-white rounded-xl shadow-lg px-6 py-8 border border-slate-200">
+    <div class="w-full max-w-sm bg-white rounded-xl shadow-2xl px-8 py-10 border border-primary-100">
+        
         <!-- Logo + titre -->
-        <div class="flex flex-col items-center mb-6">
-            <div class="w-14 h-14 mb-3 bg-slate-800 rounded-lg shadow-lg flex items-center justify-center">
-                <img src="{{ asset('images/ChatGPT Image 31 juil. 2025, 00_39_29.png') }}" alt="Logo Supply" class="w-10 h-10 object-contain">
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-16 h-16 mb-4 bg-primary-700 rounded-lg shadow-lg flex items-center justify-center">
+                <img src="{{ asset('assets/branding/supply_logo.svg') }}" alt="Logo Supply" class="w-10 h-10">
             </div>
-            <h2 class="text-2xl font-bold text-slate-800">Connexion</h2>
-            <p class="text-sm text-slate-600 mt-1">Accédez à votre compte pour gérer vos activités</p>
+            <h1 class="text-3xl font-bold text-slate-900">Connexion</h1>
+            <p class="text-sm text-slate-600 mt-2">Accédez à votre compte Supply</p>
         </div>
 
-        <!-- Lien vers inscription -->
-        <div class="text-center mb-6">
-            <a href="{{ route('register') }}"
-               class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm font-medium text-gray-700 transition">
-                Pas encore de compte ? <span class="text-green-600 font-semibold">Créer un compte</span>
-            </a>
-        </div>
-
-        <!-- Messages d’erreur -->
-        @if ($errors->any())
-            <div class="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
-                @foreach ($errors->all() as $error)
-                    <div>⚠️ {{ $error }}</div>
-                @endforeach
-            </div>
-        @endif
-
-        <!-- Formulaire -->
-        <form action="{{ route('login') }}" method="POST" class="space-y-4">
+        <!-- Formulaire de connexion -->
+        <form method="POST" action="{{ route('login') }}" class="space-y-5">
             @csrf
 
+            <!-- Email -->
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Adresse e-mail</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                    class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent focus:outline-none">
+                <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                <input type="email" name="email" id="email" 
+                       value="{{ old('email') }}"
+                       class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition @error('email') border-red-500 @enderror"
+                       placeholder="votre@email.com" required>
+                @error('email')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
+            <!-- Mot de passe -->
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
-                <div class="relative mt-1">
-                    <input type="password" id="password" name="password" required
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 pr-10 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent focus:outline-none">
-                    <button type="button" id="togglePassword" aria-label="Afficher ou masquer le mot de passe"
-                        class="absolute inset-y-0 right-3 flex items-center text-gray-500">
-                        <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3l18 18" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                  d="M9.88 9.88A3 3 0 0114.12 14.12" />
+                <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Mot de passe</label>
+                <div class="relative">
+                    <input type="password" name="password" id="password"
+                           class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition @error('password') border-red-500 @enderror"
+                           placeholder="••••••••" required>
+                    <button type="button" 
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition"
+                            onclick="togglePassword('password')">
+                        <svg id="password-eye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
                     </button>
                 </div>
+                @error('password')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
-            <div class="flex justify-between items-center text-sm text-gray-600">
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" name="remember" class="rounded text-green-600 focus:ring-green-600">
-                    <span>Se souvenir de moi</span>
-                </label>
-                <a href="{{ route('password.request') }}" class="text-green-600 hover:underline">Mot de passe oublié ?</a>
+            <!-- Se souvenir de moi -->
+            <div class="flex items-center">
+                <input type="checkbox" name="remember" id="remember" 
+                       class="w-4 h-4 text-primary-600 bg-slate-100 border-slate-300 rounded focus:ring-primary-500 transition">
+                <label for="remember" class="ml-2 text-sm text-slate-700">Se souvenir de moi</label>
             </div>
 
+            <!-- Bouton connexion -->
             <button type="submit"
-                class="w-full mt-2 bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200">
+                    class="w-full bg-primary-700 hover:bg-primary-800 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
                 Se connecter
             </button>
         </form>
 
-        <!-- Séparateur -->
-        <div class="flex items-center justify-center mt-6">
-            <div class="w-1/4 border-t border-gray-200"></div>
-            <span class="mx-3 text-gray-400 text-sm">ou</span>
-            <div class="w-1/4 border-t border-gray-200"></div>
-        </div>
+        <!-- Liens -->
+        <div class="mt-6 space-y-3">
+            @if (Route::has('password.request'))
+                <div class="text-center">
+                    <a href="{{ route('password.request') }}"
+                       class="text-sm text-primary-700 hover:text-primary-800 font-medium transition">
+                        Mot de passe oublié?
+                    </a>
+                </div>
+            @endif
 
-        <!-- Connexion sociale -->
-        <div class="mt-4 space-y-3">
-            <button
-                class="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                <img src="{{ asset('images/google.svg') }}" class="w-5 h-5" alt="Google">
-                <span class="text-gray-700 text-sm font-medium">Continuer avec Google</span>
-            </button>
-
-            <button
-                class="flex items-center justify-center gap-3 w-full py-2 border border-gray-300 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">
-                <img src="{{ asset('images/facebook.svg') }}" class="w-5 h-5" alt="Facebook">
-                <span class="text-sm font-medium">Continuer avec Facebook</span>
-            </button>
+            <div class="text-center text-sm text-slate-600">
+                Pas encore de compte?
+                <a href="{{ route('register') }}"
+                   class="text-primary-700 hover:text-primary-800 font-semibold transition">
+                    Créer un compte
+                </a>
+            </div>
         </div>
     </div>
 
     <script>
-        // Afficher / masquer le mot de passe
-        (function(){
-            const pw = document.getElementById('password');
-            const btn = document.getElementById('togglePassword');
-            const eyeOpen = document.getElementById('eyeOpen');
-            const eyeClosed = document.getElementById('eyeClosed');
-            if (!pw || !btn) return;
-            btn.addEventListener('click', function(){
-                const show = pw.type === 'password';
-                pw.type = show ? 'text' : 'password';
-                eyeOpen.classList.toggle('hidden', show);
-                eyeClosed.classList.toggle('hidden', !show);
-            });
-        })();
+        function togglePassword(fieldId) {
+            const input = document.getElementById(fieldId);
+            const eye = document.getElementById(fieldId + '-eye');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-2.391m5.005-2.905A9.005 9.005 0 0112 5c4.478 0 8.268 2.943 9.543 7a9.97 9.97 0 01-1.563 2.391m0 0A9.025 9.025 0 0112 12.75a9.026 9.026 0 01.378-1.863m0 0a9.026 9.026 0 00-.378 1.863m0 0H21m-8.958 6A1.998 1.998 0 0110.5 15H9m11.857 1.175A4 4 0 0021 12a4 4 0 00-9-4H6a4 4 0 000 8h.857a4 4 0 003.857 3.175z"/>';
+            } else {
+                input.type = 'password';
+                eye.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            }
+        }
     </script>
-
 </body>
 </html>
