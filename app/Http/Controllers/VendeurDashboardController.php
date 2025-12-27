@@ -47,7 +47,7 @@ class VendeurDashboardController extends Controller
         ->get();
 
         // Récupérer les dernières commandes
-        $dernieres_commandes = Commande::where('vendeur_id', $vendeur->id)
+        $dernieres_commandes = Commande::where('idVendeur', $vendeur->id)
             ->with(['client', 'lignes.produit'])
             ->orderBy('dateCommande', 'desc')
             ->take(5)
@@ -357,7 +357,7 @@ class VendeurDashboardController extends Controller
 
     public function commandes()
     {
-        $commandes = Commande::where('vendeur_id', Auth::id())
+        $commandes = Commande::where('idVendeur', Auth::id())
             ->with(['client', 'lignes.produit'])
             ->orderBy('dateCommande', 'desc')
             ->paginate(10);
